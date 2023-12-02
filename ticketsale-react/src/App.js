@@ -11,7 +11,10 @@ class App extends React.Component {
       manager: '',
       availableTickets: '',
       price: '',
-      tickets: []
+    };
+
+    this.stateGetTicketOf = {
+      ticketOwnerAddress: ''
     };
 
     this.handleBuyTicket = this.handleBuyTicket.bind(this);
@@ -26,18 +29,20 @@ class App extends React.Component {
     this.handleAcceptTicketSwap = this.handleAcceptTicketSwap.bind(this);
     this.handleSubmitAcceptTicketSwap = this.handleSubmitAcceptTicketSwap.bind(this);
 
-  }
+    this.handleGetTicket = this.handleGetTicket.bind(this);
+    this.handleSubmitGetTicket = this.handleSubmitGetTicket.bind(this);
 
+  }
+  
   async componentDidMount() {
     const manager = await ticketsale.methods.manager().call();
     const availableTickets = await ticketsale.methods.availableTickets().call();
     const price = await ticketsale.methods.ticketPrice().call();
-    const tickets = await ticketsale.methods.tickets().call();
+    // const tickets = await ticketsale.methods.tickets(0).call();
     this.setState({ 
       'manager':manager, 
       'availableTickets': availableTickets, 
       'price': price,
-      'tickets': tickets
     });
   }
 
@@ -125,11 +130,30 @@ class App extends React.Component {
     });
   }
 
+  //Get Ticket ID handlers
+  handleGetTicket(event){
+    this.setStateGetTicketOf({
+      ticketOwnerAddress: event.target.value
+    })
+  }
+  handleSubmitGetTicket = async (event) =>{
+    event.preventDefault()
+    alert(`
+       Details   \n
+       Price : ${this.state.price}
+       User Address : ${this.stateGetTicketOf.ticketOwnerAddress}
+    `)
+    const accounts = await web3.eth.getAccounts();
+    this.setState({ message: "Retrieving ID..."})
+
+    await ticketsale.methods.getTicketOf(this.stateGetTicketOf.ticketOwnerAddress).send({
+      from: accounts[0]
+    });
+  }
 
 
 //Render Components on Page
  render() {
-  console.log(this.state.tickets)
    return (
      <div>
       {/* Page navbar and header */}
@@ -150,7 +174,7 @@ class App extends React.Component {
            <label>Enter a Ticket ID: </label>
            <input
               placeholder='Enter Ticket ID'
-              value={this.state.tickets}
+              value={this.state.ticketId}
               onChange={this.handleBuyTicket}
            />
          </div>
@@ -166,7 +190,7 @@ class App extends React.Component {
           <label>Enter a ticket ID to Return: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.tickets}
+              value={this.state.ticketId}
               onChange={this.handleReturnTicket}
           />
         </div>
@@ -182,7 +206,7 @@ class App extends React.Component {
           <label>Enter a ticket ID you would like to swap for: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.tickets}
+              value={this.state.ticketId}
               onChange={this.handleOfferTicketSwap}
           />
         </div>
@@ -198,7 +222,7 @@ class App extends React.Component {
           <label>Enter the ticket ID to swap for: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.tickets}
+              value={this.state.ticketId}
               onChange={this.handleAcceptTicketSwap}
           />
         </div>
@@ -207,10 +231,23 @@ class App extends React.Component {
         </div>
        </form>
 
+      {/* GetTicketOf */}
+       <form class="format" onSubmit={this.handleSubmitGetTicket}>
+        <h4 class="subheader">Accept a Ticket Swap</h4>
+        <div>
+          <label>Enter the user address to get ticket ID: </label>
+          <input
+              placeholder='Enter user address'
+              value={this.stateGetTicketOf.ticketOwnerAddress}
+              onChange={(event) => this.setStateGetTicketOf({ ticketOwnerAddress: event.target.value })}
+          />
+        </div>
+        <div>
+          <button name="GetTicketId">Get Ticket ID</button>
+        </div>
+       </form>
+
        <hr color="Gray" size="3px" width="1500px"/>
-       <h1>{this.state.manager}</h1>
-       <h1>{this.state.availableTickets}</h1>
-       <h1>{this.state.price}</h1>
      </div>
    );
  }
