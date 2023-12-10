@@ -202,7 +202,7 @@ class App extends React.Component {
 
       {/* GetTicketOf */}
        <form class="format" onSubmit={this.handleSubmitGetTicket}>
-        <h4 class="subheader">Accept a Ticket Swap</h4>
+        <h4 class="subheader">Find the ticketID of a Users Address</h4>
         <div>
           <label>Enter the user address to get ticket ID: </label>
           <input
