@@ -17,19 +17,14 @@ class App extends React.Component {
       ticketOwnerAddress: ''
     };
 
-    this.handleBuyTicket = this.handleBuyTicket.bind(this);
     this.handleSubmitBuyTicket = this.handleSubmitBuyTicket.bind(this);
 
-    this.handleReturnTicket = this.handleReturnTicket.bind(this);
     this.handleSubmitReturnTicket = this.handleSubmitReturnTicket.bind(this);
 
-    this.handleOfferTicketSwap = this.handleOfferTicketSwap.bind(this);
     this.handleSubmitOfferTicketSwap = this.handleSubmitOfferTicketSwap.bind(this);
     
-    this.handleAcceptTicketSwap = this.handleAcceptTicketSwap.bind(this);
     this.handleSubmitAcceptTicketSwap = this.handleSubmitAcceptTicketSwap.bind(this);
 
-    this.handleGetTicket = this.handleGetTicket.bind(this);
     this.handleSubmitGetTicket = this.handleSubmitGetTicket.bind(this);
 
   }
@@ -47,95 +42,66 @@ class App extends React.Component {
   }
 
   //Buy ticket handlers
-  handleBuyTicket(event){
-      this.setState({
-        ticketId: event.target.value
-      });
-    }
   handleSubmitBuyTicket = async (event) =>{
     event.preventDefault()
     alert(`
       ____Your Details____\n
       Price : ${this.state.price}
-      Ticket ID : ${this.state.ticketId}
+      Ticket ID : ${this.state.buyTicketID}
     `)
     const accounts = await web3.eth.getAccounts();
-    this.setState({ message: "Waiting on transaction success..." });
 
-    await ticketsale.methods.buyTicket(this.state.ticketId).send({
+    await ticketsale.methods.buyTicket(this.state.buyTicketID).send({
       from: accounts[0]
      });
   }
 
   //Return ticket handlers
-  handleReturnTicket(event){
-    this.setState({
-      ticketId: event.target.value
-    })
-  }
   handleSubmitReturnTicket = async (event) =>{
     event.preventDefault()
     alert(`
        Return Details   \n
        Price : ${this.state.price}
-       Ticket ID : ${this.state.ticketId}
+       Ticket ID : ${this.state.returnTicketID}
     `)
     const accounts = await web3.eth.getAccounts();
-    this.setState({ message: "Waiting on Refund success..."})
 
-    await ticketsale.methods.returnTicket(this.state.ticketId).send({
+    await ticketsale.methods.returnTicket(this.state.returnTicketID).send({
       from: accounts[0]
     });
   }
 
   //Offer ticket swap handlers
-  handleOfferTicketSwap(event){
-    this.setState({
-      ticketId: event.target.value
-    })
-  }
   handleSubmitOfferTicketSwap = async (event) =>{
     event.preventDefault()
     alert(`
        Return Details   \n
        Price : ${this.state.price}
-       Ticket ID : ${this.state.ticketId}
+       Ticket ID : ${this.state.offerSwapTicketID}
     `)
     const accounts = await web3.eth.getAccounts();
-    this.setState({ message: "Your request has been submitted. Waiting for acceptance"})
 
-    await ticketsale.methods.offerSwap(this.state.ticketId).send({
+    await ticketsale.methods.offerSwap(this.state.offerSwapTicketID).send({
       from: accounts[0]
     });
   }
 
   //Accept ticket swap handlers
-  handleAcceptTicketSwap(event){
-    this.setState({
-      ticketId: event.target.value
-    })
-  }
   handleSubmitAcceptTicketSwap = async (event) =>{
     event.preventDefault()
     alert(`
        Return Details   \n
        Price : ${this.state.price}
-       Ticket ID : ${this.state.ticketId}
+       Ticket ID : ${this.state.acceptSwapTicketID}
     `)
     const accounts = await web3.eth.getAccounts();
-    this.setState({ message: "Waiting on swap completion..."})
 
-    await ticketsale.methods.acceptSwap(this.state.ticketId).send({
+    await ticketsale.methods.acceptSwap(this.state.acceptSwapTicketID).send({
       from: accounts[0]
     });
   }
 
   //Get Ticket ID handlers
-  handleGetTicket(event){
-    this.setStateGetTicketOf({
-      ticketOwnerAddress: event.target.value
-    })
-  }
   handleSubmitGetTicket = async (event) =>{
     event.preventDefault()
     alert(`
@@ -144,7 +110,6 @@ class App extends React.Component {
        User Address : ${this.stateGetTicketOf.ticketOwnerAddress}
     `)
     const accounts = await web3.eth.getAccounts();
-    this.setState({ message: "Retrieving ID..."})
 
     await ticketsale.methods.getTicketOf(this.stateGetTicketOf.ticketOwnerAddress).send({
       from: accounts[0]
@@ -174,8 +139,9 @@ class App extends React.Component {
            <label>Enter a Ticket ID: </label>
            <input
               placeholder='Enter Ticket ID'
-              value={this.state.ticketId}
-              onChange={this.handleBuyTicket}
+              id="buyTicketID"
+              name="buyTicketID"
+              onChange={(event) => this.setState({[event.target.name]: event.target.value})}
            />
          </div>
          <div>
@@ -190,8 +156,9 @@ class App extends React.Component {
           <label>Enter a ticket ID to Return: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.ticketId}
-              onChange={this.handleReturnTicket}
+              id="returnTicketID"
+              name="returnTicketID"
+              onChange={(event) => this.setState({[event.target.name]: event.target.value})}
           />
         </div>
         <div>
@@ -206,8 +173,9 @@ class App extends React.Component {
           <label>Enter a ticket ID you would like to swap for: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.ticketId}
-              onChange={this.handleOfferTicketSwap}
+              id="offerSwapTicketID"
+              name="offerSwapTicketID"
+              onChange={(event) => this.setState({[event.target.name]: event.target.value})}
           />
         </div>
         <div>
@@ -222,8 +190,9 @@ class App extends React.Component {
           <label>Enter the ticket ID to swap for: </label>
           <input
               placeholder='Enter Ticket ID'
-              value={this.state.ticketId}
-              onChange={this.handleAcceptTicketSwap}
+              id="acceptSwapTicketID"
+              name="acceptSwapTicketID"
+              onChange={(event) => this.setState({[event.target.name]: event.target.value})}
           />
         </div>
         <div>
@@ -238,8 +207,9 @@ class App extends React.Component {
           <label>Enter the user address to get ticket ID: </label>
           <input
               placeholder='Enter user address'
-              value={this.stateGetTicketOf.ticketOwnerAddress}
-              onChange={(event) => this.setStateGetTicketOf({ ticketOwnerAddress: event.target.value })}
+              id="ticketOwnerAddress"
+              name="ticketOwnerAddress"
+              onChange={(event) => this.setState({[event.target.name]: event.target.value})}
           />
         </div>
         <div>
